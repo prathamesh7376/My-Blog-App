@@ -31,12 +31,12 @@ const SubTableItem = ({ email, mongoID, deleteEmail, date }) => {
         {emailDate ? emailDate.toDateString() : "Invalid Date"}
       </td>
       <td
-        className="px-6 py-4 cursor-pointer"
+        className="px-6 py-4 cursor-pointer text-red-800"
         onClick={handleDeleteClick}
         title="Delete"
         aria-label="Delete Email"
       >
-        X
+        Delete
       </td>
     </tr>
   );

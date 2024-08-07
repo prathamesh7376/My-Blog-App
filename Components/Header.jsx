@@ -4,6 +4,7 @@ import { assets } from "@/Assets/assets";
 import axios from "axios";
 import Image from "next/image";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 const Header = () => {
   const [email, setEmail] = useState("");
@@ -59,11 +60,12 @@ const Header = () => {
             value={email}
             type="email"
             placeholder="Enter your email"
-            className="pl-4 outline-none"
+            className="flex-1 py-3 px-4 outline-none border-none rounded-l-md bg-gray-100 focus:ring-2 focus:ring-blue-500"
+            required
           />
           <button
             type="submit"
-            className="border-l border-black py-4 px-4 sm:px-8 active:bg-gray-600 active:text-white"
+            className="border-l border-black py-3 px-4 sm:px-8 bg-black text-white rounded-r-md hover:bg-gray-800 active:bg-gray-600"
           >
             Subscribe
           </button>

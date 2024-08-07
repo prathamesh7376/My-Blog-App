@@ -3,6 +3,7 @@ import Sidebar from "@/Components/adminComponents/Sidebar";
 import Footer from "@/Components/Footer";
 import Image from "next/image";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Layout({ children }) {
   return (
