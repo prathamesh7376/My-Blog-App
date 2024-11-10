@@ -9,6 +9,8 @@ import { useCallback, useEffect, useState } from "react";
 
 const Page = ({ params }) => {
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true); // Track loading state
+  const [error, setError] = useState(null); // Track error state
 
   // Use useCallback to memoize fetchBlogData
   const fetchBlogData = useCallback(async () => {
@@ -19,15 +21,33 @@ const Page = ({ params }) => {
         },
       });
       setData(response.data);
+      setLoading(false); // Set loading to false once data is fetched
     } catch (error) {
       console.error("Error fetching blog data:", error);
-      // Optionally handle the error (e.g., show a message to the user)
+      setError("Failed to load the blog. Please try again later.");
+      setLoading(false); // Set loading to false on error
     }
   }, [params.id]); // Include params.id as a dependency
 
   useEffect(() => {
     fetchBlogData();
   }, [fetchBlogData]); // Include fetchBlogData in the dependency array
+
+  if (loading) {
+    return (
+      <div className="text-center my-24">
+        <p>Loading...</p> {/* Placeholder for loading */}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center my-24">
+        <p className="text-red-500">{error}</p> {/* Error message */}
+      </div>
+    );
+  }
 
   return data ? (
     <>
@@ -37,13 +57,13 @@ const Page = ({ params }) => {
             <Image
               src={assets.prathameshLogo}
               width={180}
-              alt="loading"
+              alt="logo"
               className="w-[130px] sm:w-auto"
             />
           </Link>
           <button className="flex items-center gap-2 font-medium py-1 px-3 sm:py-3 sm:px-6 border border-black shadow-[-7px_7px_0px_#000000]">
             Get Started
-            <Image src={assets.arrow} alt="loading" />
+            <Image src={assets.arrow} alt="arrow" />
           </button>
         </div>
         <div className="text-center my-24">
@@ -56,7 +76,7 @@ const Page = ({ params }) => {
             height={100}
             width={100}
             priority
-            alt="loading"
+            alt="author"
           />
           <p className="mt-1 pb-2 text-lg max-w-[740px] mx-auto">
             {data.author}
@@ -68,7 +88,7 @@ const Page = ({ params }) => {
           src={data.image}
           width={1280}
           height={720}
-          alt="loading"
+          alt="blog-image"
           className="border-4 border-white "
         />
         <h1 className="my-8 text-[26px] font-semibold">Introduction</h1>
@@ -78,21 +98,19 @@ const Page = ({ params }) => {
         ></div>
 
         <div className="my-24 ">
-          <p className="text-black font-semibold my-4 ">
+          <p className="text-black font-semibold my-4">
             Share this article on social media
           </p>
-          <div className="flex ">
-            <Image src={assets.facebook_icon} width={50} alt="loading" />
-            <Image src={assets.twitter_icon} width={50} alt="loading" />{" "}
-            <Image src={assets.googleplus_icon} width={50} alt="loading" />
+          <div className="flex gap-4">
+            <Image src={assets.facebook_icon} width={50} alt="facebook" />
+            <Image src={assets.twitter_icon} width={50} alt="twitter" />
+            <Image src={assets.googleplus_icon} width={50} alt="google-plus" />
           </div>
         </div>
       </div>
       <Footer />
     </>
-  ) : (
-    <></>
-  );
+  ) : null;
 };
 
 export default Page;

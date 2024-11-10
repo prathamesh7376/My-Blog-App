@@ -3,11 +3,11 @@
 import { assets } from "@/Assets/assets";
 import axios from "axios";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
 const Page = () => {
-  const [image, setImage] = useState(null); // Changed initial value to null
+  const [image, setImage] = useState(null); // Initial value set to null
   const [data, setData] = useState({
     title: "",
     description: "",
@@ -16,34 +16,48 @@ const Page = () => {
     authorImg: "/auther_img.png",
   });
 
+  // Handle cleanup of object URL to prevent memory leaks
+  useEffect(() => {
+    if (image) {
+      const objectURL = URL.createObjectURL(image);
+      return () => URL.revokeObjectURL(objectURL); // Cleanup URL
+    }
+  }, [image]);
+
   const onChangeHandler = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setData((data) => ({ ...data, [name]: value }));
+    const { name, value } = event.target;
+    setData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+
+    if (!image) {
+      toast.error("Please upload an image.");
+      return;
+    }
+
     const formData = new FormData();
-    formData.append("title", data.title);
-    formData.append("description", data.description);
-    formData.append("category", data.category);
-    formData.append("author", data.author);
-    formData.append("authorImg", data.authorImg);
+    Object.entries(data).forEach(([key, value]) => formData.append(key, value));
     formData.append("image", image);
-    const response = await axios.post("/api/blog", formData);
-    if (response.data.success) {
-      toast.success(response.data.msg);
-      setData({
-        title: "",
-        description: "",
-        category: "Startup",
-        author: "Prathamesh Lokhande",
-        authorImg: "/auther_img.png",
-      });
-      setImage(null); // Changed to null
-    } else {
-      toast.error("Error");
+
+    try {
+      const response = await axios.post("/api/blog", formData);
+      if (response.data.success) {
+        toast.success(response.data.msg);
+        setData({
+          title: "",
+          description: "",
+          category: "Startup",
+          author: "Prathamesh Lokhande",
+          authorImg: "/auther_img.png",
+        });
+        setImage(null);
+      } else {
+        toast.error("Upload failed, please try again.");
+      }
+    } catch (error) {
+      toast.error("Server error. Please try again later.");
     }
   };
 
@@ -59,6 +73,8 @@ const Page = () => {
               height={100}
               alt="Upload area"
               className="mx-auto border border-spacing-6 rounded-lg shadow-md"
+              placeholder="blur"
+              blurDataURL="/path/to/placeholder.jpg" // Add an actual placeholder image path
             />
           </label>
           <input

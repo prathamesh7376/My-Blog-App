@@ -1,5 +1,3 @@
-// page.jsx
-
 "use client";
 
 import BlogTableItem from "@/Components/adminComponents/BlogTableItem";
@@ -15,7 +13,7 @@ const Page = () => {
       const response = await axios.get("/api/blog");
       setBlogs(response.data.blogs);
     } catch (error) {
-      toast.error("Failed to fetch blogs");
+      toast.error("Failed to fetch blogs. Please try again later.");
     }
   };
 
@@ -25,15 +23,15 @@ const Page = () => {
         params: { id: mongoId },
       });
       toast.success(response.data.msg);
-      fetchBlogs();
+      fetchBlogs(); // Refresh the list after deletion
     } catch (error) {
-      toast.error("Failed to delete blog");
+      toast.error("Failed to delete blog. Please try again.");
     }
   };
 
   useEffect(() => {
     fetchBlogs();
-  }, []);
+  }, [fetchBlogs]); // Add fetchBlogs as a dependency to avoid stale closures
 
   return (
     <div className="flex-1 pt-5 px-5 sm:pt-12 sm:pl-16">
@@ -57,9 +55,9 @@ const Page = () => {
             </tr>
           </thead>
           <tbody>
-            {blogs.map((item, index) => (
+            {blogs.map((item) => (
               <BlogTableItem
-                key={index}
+                key={item._id} // Use unique id instead of index
                 mongoId={item._id}
                 title={item.title}
                 author={item.author}
